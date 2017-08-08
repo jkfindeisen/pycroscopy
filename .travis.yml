@@ -38,5 +38,5 @@ deploy:
   local_dir: gh-pages
   on:
     tags: false
-#  on:
-#    branch: master
+  on:
+    branch: travis-test

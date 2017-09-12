@@ -34,26 +34,26 @@ def test_filter(resp_wfm, filter_parms, samp_rate, show_plots=True, use_rainbow_
     """
     Filters the provided response with the provided filters. Use this only to test filters.
     This function does not care about the file structure etc.
-    
+
     Parameters
     ----------
     resp_wfm : 1D numpy float array
         Raw response waveform in the time domain
     filter_parms : dictionary
         Dictionary that contains all the filtering parameters, see Notes for details.
-    samp_rate : unsigned int 
+    samp_rate : unsigned int
         Sampling rate in Hertz
     show_plots : (Optional) Boolean
         Whether or not to plot FFTs before and after filtering
     use_rainbow_plots : (Optional) Boolean
         Whether or not to plot loops whose color varied as a function of time
     excit_wfm : (Optional) 1D numpy float array
-        Excitation waveform in the time domain. This waveform is necessary for plotting loops. 
+        Excitation waveform in the time domain. This waveform is necessary for plotting loops.
     central_resp_size : (Optional) unsigned int
         Number of responce sample points from the center of the waveform to show in plots. Useful for SPORC
     verbose : (Optional) string
         Whether or not to print statements
-    
+
     Returns
     -------
     filt_data : 1D numpy float array
@@ -79,13 +79,17 @@ def test_filter(resp_wfm, filter_parms, samp_rate, show_plots=True, use_rainbow_
         Number of pixels to filter simultaneously
 
     """
+    # calculates the number of points in teh volate waveform
     num_pts = len(resp_wfm)
 
+    # selects if the user wants to show the loops
     show_loops = excit_wfm is not None and show_plots
 
     '''
     Get parameters from the dictionary.
     '''
+
+    # builds a filter that removes specified noise frequencies
     noise_band_filter = filter_parms.get('band_filt_[Hz]', 1)
     if noise_band_filter is None:
         noise_band_filter = 1
@@ -97,6 +101,7 @@ def test_filter(resp_wfm, filter_parms, samp_rate, show_plots=True, use_rainbow_
     else:
         noise_band_filter = 1
 
+    # builds a low pass filter (if cuttoff  > 0)
     low_pass_filter = filter_parms.get('LPF_cutOff_[Hz]', -1)
     if low_pass_filter is None:
         low_pass_filter = 1
@@ -107,6 +112,7 @@ def test_filter(resp_wfm, filter_parms, samp_rate, show_plots=True, use_rainbow_
     else:
         low_pass_filter = 1
 
+    # builds harmonic filter
     harmonic_filter = filter_parms.get('comb_[Hz]', 1)
     if isinstance(harmonic_filter, Iterable):
         harmonic_filter = harmonicsPassFilter(num_pts, samp_rate, harmonic_filter[0],
@@ -204,7 +210,7 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
     # TODO: Can simplify this function substantially. Collapse / absorb the serial and parallel functions...
     """
     Filters G-mode data using specified filter parameters and writes results to file.
-        
+
     Parameters
     ----------
     h5_main : HDF5 dataset object
@@ -217,7 +223,7 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
         Whether or not to write condensed filtered data to file
     num_cores : unsigned int
         Number of cores to use for processing data in parallel
-        
+
     Returns
     -------
     HDF5 group reference containing filtered dataset
@@ -227,7 +233,7 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
         """
         Returns the maximum number of pixels that can be stored in memory considering the output data and the
         number of cores
-        
+
         Parameters
         ----------
         h5_raw : HDF5 Dataset reference
@@ -241,7 +247,7 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
         bytes_per_bin : unsigned int (optional)
             bytes per unit in the raw data - typically 2 bytes
         max_RAM_gb : unsigned int (optional)
-            Maximum system memory that can be used. This is NOT respected well. Please fix this.            
+            Maximum system memory that can be used. This is NOT respected well. Please fix this.
         """
 
         # double the memory requirement if storing filtered data
@@ -266,7 +272,7 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
         This function delegates the actual fitting responsibility to the
         appropriate function. Decides whether or not serial / parallel processing
         is appropriate, number of cores, number of chunks, etc.
-        
+
         Parameters
         ----------
         raw_mat : 2D numpy array
@@ -275,11 +281,11 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
             Parameters necessary for filtering
         recom_cores : unsigned int
             Number of cores to use for processing data in parallel
-        
+
         Returns
         -------
         (noise_floors, filt_data, cond_data)
-        
+
         noise_floors : 1D numpy array
             Contains the noise floors per set of measurements
         filt_data : 2D numpy array or None
@@ -297,7 +303,7 @@ def fft_filter_dataset(h5_main, filter_parms, write_filtered=True, write_condens
         if recom_cores > 1 and recom_chunks < 10:
             min_jobs = 20
             reduced_cores = int(raw_mat.shape[0] / min_jobs)
-            # intelligently set the cores now. 
+            # intelligently set the cores now.
             recom_cores = min(max_cores, reduced_cores)
             print('Not enough jobs per core. Reducing cores to', recom_cores)
 
@@ -496,7 +502,7 @@ def filter_chunk_parallel(raw_data, parm_dict, num_cores):
     # TODO: Need to check to ensure that all cores are indeed being utilized
     """
     Filters the provided dataset in parallel
-    
+
     Parameters
     ----------
     raw_data : 2D numpy array
@@ -505,11 +511,11 @@ def filter_chunk_parallel(raw_data, parm_dict, num_cores):
         Parameters necessary for filtering
     num_cores : unsigned int
         Number of cores to use for processing data in parallel
-    
+
     Returns
     -------
     (noise_floors, filt_data, cond_data)
-    
+
     noise_floors : 1D numpy array
         Contains the noise floors per set of measurements
     filt_data : 2D numpy array or None
@@ -581,18 +587,18 @@ def filter_chunk_parallel(raw_data, parm_dict, num_cores):
 def filter_chunk_serial(raw_data, parm_dict):
     """
     Filters the provided dataset serially
-    
+
     Parameters
     ----------
     raw_data : 2D numpy array
         Raw data arranged as [repetition, points per measurement]
     parm_dict : Dictionary
         Parameters necessary for filtering
-    
+
     Returns
     -------
     (noise_floors, filt_data, cond_data)
-    
+
     noise_floors : 1D numpy array
         Contains the noise floors per set of measurements
     filt_data : 2D numpy array or None
@@ -644,15 +650,15 @@ def filter_chunk_serial(raw_data, parm_dict):
 
 def unit_filter(single_parm):
     """
-    Filters a single instance of a signal. 
+    Filters a single instance of a signal.
     This is the function that is called in parallel
-    
+
     Parameters
     ----------
     single_parm : Tuple
-        Parameters and data for filtering a single data instance. 
+        Parameters and data for filtering a single data instance.
         Constructed as (raw_data_vec, parm_dict)
-    
+
     Returns
     -------
     noise_floors : float
@@ -704,25 +710,25 @@ def unit_filter(single_parm):
 def decompress_response(f_condensed_mat, num_pts, hot_inds):
     """
     Returns the time domain representation of waveform(s) that are compressed in the frequency space
-    
+
     Parameters
     ----------
     f_condensed_mat : 1D or 2D complex numpy arrays
-        Frequency domain signals arranged as [position, frequency]. 
-        Only the positive frequncy bins must be in the compressed dataset. 
+        Frequency domain signals arranged as [position, frequency].
+        Only the positive frequncy bins must be in the compressed dataset.
         The dataset is assumed to have been FFT shifted (such that 0 Hz is at the center).
     num_pts : unsigned int
         Number of points in the time domain signal
     hot_inds : 1D unsigned int numpy array
-        Indices of the frequency bins in the compressed data. 
-        This index array will be necessary to reverse map the condensed 
+        Indices of the frequency bins in the compressed data.
+        This index array will be necessary to reverse map the condensed
         FFT into its original form
-        
+
     Returns
     -------
     time_resp : 2D numpy array
         Time domain response arranged as [position, time]
-        
+
     Notes
     -----
     Memory is given higher priority here, so this function loops over the position

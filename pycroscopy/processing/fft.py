@@ -48,10 +48,10 @@ def getNoiseFloor(fft_data, tolerance):
         Signal in frequency space (ie - after FFT shifting) arranged as (channel or repetition, signal)
     tolerance : unsigned float
         Tolerance to noise. A smaller value gets rid of more noise.
-        
+
     Returns
     -------
-    noise_floor : 1D real numpy array 
+    noise_floor : 1D real numpy array
         One value per channel / repetition
 
     """
@@ -93,14 +93,14 @@ def getNoiseFloor(fft_data, tolerance):
 def downSample(fft_vec, freq_ratio):
     """
     Downsamples the provided data vector
-    
+
     Parameters
     ----------
     fft_vec : 1D complex numpy array
         Waveform that is already FFT shifted
     freq_ratio : float
         new sampling rate / old sampling rate (less than 1)
-    
+
     Returns
     -------
     fft_vec : 1D numpy array
@@ -125,24 +125,24 @@ def downSample(fft_vec, freq_ratio):
 def noiseBandFilter(num_pts, samp_rate, freqs, freq_widths, show_plots=False):
     """
     Builds a filter that removes specified noise frequencies
-    
+
     Parameters
     ----------
     num_pts : unsigned int
         Number of points in the FFT signal
     samp_rate : unsigned int
-        sampling rate    
+        sampling rate
     freqs : 1D array or list
-        Target frequencies as unsigned ints    
+        Target frequencies as unsigned ints
     freq_widths : 1D array or list
-        Width around the target frequency that should be set to 0\n    
+        Width around the target frequency that should be set to 0\n
     show_plots : bool
         If True, plots will be displayed during calculation.  Default False
 
     Note
     ----
     sampRate, freqs, freq_widths have same units - eg MHz
-    
+
     Returns
     -------
     noise_filter : 1D numpy array
@@ -201,7 +201,7 @@ def noiseBandFilter(num_pts, samp_rate, freqs, freq_widths, show_plots=False):
 def makeLPF(num_pts, samp_rate, f_cutoff, roll_off=0.05):
     """
     Builds a low pass filter
-    
+
     Parameters
     ----------
     num_pts : unsigned int
@@ -211,9 +211,9 @@ def makeLPF(num_pts, samp_rate, f_cutoff, roll_off=0.05):
     f_cutoff : unsigned integer
         Cutoff frequency for filter
     roll_off : 0 < float < 1
-        Frequency band over which the filter rolls off. rol off = 0.05 on a 
+        Frequency band over which the filter rolls off. rol off = 0.05 on a
         100 kHz low pass filter -> roll off from 95 kHz (1) to 100 kHz (0)
-        
+
     Returns
     -------
     LPF : 1D numpy array describing the low pass filter
@@ -253,7 +253,7 @@ def makeLPF(num_pts, samp_rate, f_cutoff, roll_off=0.05):
 def harmonicsPassFilter(num_pts, samp_rate, first_freq, band_width, num_harm, do_plots=False):
     """
     Builds a filter that only keeps N harmonics
-    
+
     Parameters
     ----------
     num_pts : unsigned int
@@ -270,12 +270,12 @@ def harmonicsPassFilter(num_pts, samp_rate, first_freq, band_width, num_harm, do
         Whether or not to generate plots. Not necessary after debugging
 
     Note that the frequency values must all have the same units
-    
+
     Returns
     -------
     harm_filter : 1D numpy array
         0s where the signal is to be rejected and 1s at harmonics
-        
+
     """
 
     num_pts = abs(int(num_pts))

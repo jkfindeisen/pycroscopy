@@ -51,8 +51,10 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     PCA_reconstructed = pca.inverse_transform(pca.transform(loops))
 
     # resized the array for hyperspectral data
-    if loops.ndim == 3:
+    try:
         PCA_reconstructed = PCA_reconstructed.reshape(original_size, original_size, -1)
+    except:
+        pass
 
     return(PCA, PCA_reconstructed)
 
@@ -148,3 +150,34 @@ def layout_graphs_of_arb_number(graph):
             fig.delaxes(axes[i])
 
     return (fig, axes)
+
+def plot_pca_maps(pca, loops):
+
+        # resizes the array for hyperspectral data
+        if loops.ndim == 3:
+            original_size = loops.shape[0]
+            loops = loops.reshape(-1, loops.shape[2])
+            verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
+        elif loops.ndim == 2:
+            pass
+        else:
+            raise ValueError("data is of an incorrect size")
+
+    for i in range(pca.n_components_):
+        im = ax[i].imshow(pca.transform(loops)[:, i].reshape(original_size, original_size))
+        ax[i].set_yticklabels('')
+        ax[i].set_xticklabels('')
+        ax[i].set_title(f'PC {i+1}')
+
+        ## Adds the scalebar
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes('right', size='10%', pad=0.05)
+        #cbar = plt.colorbar(im, cax=cax, format='%.1e')
+        #
+        ## labels figures
+        #labelfigs(ax[i], i)
+        #labelfigs(ax[i], i, string_add=f'PC {i+1}', loc='bm')
+        #
+        #add_scalebar_to_figure(axes[i], 1500, 500)
+
+        plt.tight_layout(pad=1, h_pad=1.5)

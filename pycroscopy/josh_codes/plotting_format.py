@@ -501,7 +501,25 @@ def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
                     dpi=dpi, bbox_inches='tight')
 
 def pca_weights_as_embeddings(pca, loops, num_of_components=True):
+    """
+    Computes the eigenvalue maps computed from PCA
 
+    Parameters
+    ----------
+    pca : object
+        computed PCA
+    loops: numpy array
+        raw piezoresponse data
+    num_of _components: int
+        number of PCA components to compute
+
+    Returns
+    -------
+    fig : matplotlib figure
+        handel to figure being created.
+    axes : numpy array (axes)
+        numpy array of axes that are created.
+    """
     if loops.ndim == 3:
         loops = loops.reshape(-1, loops.shape[2])
         verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(loops.shape[0],loops.shape[1]))

@@ -359,22 +359,22 @@ def add_scalebar_to_figure(axes, image_size, scale_size, units='nm', loc='br'):
 
 def path_maker(axes, locations, facecolor, edgecolor, linestyle, lineweight):
     """
-    Adds scalebar to figures
-    TODO fix docstring
+    Adds path to figure
+
     Parameters
     ----------
     axes : matplotlib axes
         axes which to add the plot to
-    locations : int
-        size of the image in nm
+    locations : numpy array
+        location to position the path
     facecolor : str, optional
-        size of the scalebar in units of nm
+        facecolor of the path
     edgecolor : str, optional
-        sets the units for the label
+        edgecolor of the path
     linestyle : str, optional
-        sets the location of the label
-    lineweight : str, optional
-        sets the location of the label
+        sets the style of the line, using conventional matplotlib styles
+    lineweight : float, optional
+        thickness of the line
     """
     vertices = []
     codes = []

@@ -1,6 +1,6 @@
 from sklearn import (decomposition)
 import numpy as np
-
+from scipy import (interpolate)
 
 def conduct_PCA(loops, n_components=15, verbose=True):
     """
@@ -30,7 +30,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
         verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
-    elif loops.size == 2:
+    elif loops.ndim == 2:
         pass
     else:
         raise ValueError("data is of an incorrect size")
@@ -76,6 +76,14 @@ def interpolate_missing_points(loop_data):
         arary of loops
     """
 
+    # reshapes the data such that it can run with different data sizes
+    if loop_data.ndim == 2:
+        loop_data = loop_data.reshape(np.sqrt(loop_data.shape[0]),
+                                                        np.sqrt(loop_data.shape[0]),-1)
+        loop_data = np.expand_dims(loop_data, axis=0)
+    elif loop_data.ndim == 3:
+        loop_data = np.expand_dims(loop_data, axis=0)
+
     # Loops around the x index
     for i in range(loop_data.shape[0]):
 
@@ -83,7 +91,7 @@ def interpolate_missing_points(loop_data):
         for j in range(loop_data.shape[1]):
 
             # Loops around the number of cycles
-            for k in range(loop_data.shape[2]):
+            for k in range(loop_data.shape[3]):
 
                if any(~np.isfinite(loop_data[i,j,:,k])):
 
@@ -95,4 +103,4 @@ def interpolate_missing_points(loop_data):
                     val = spline(point_values[ind])
                     loop_data[i,j,ind,k] = val
 
-    return loop_data
+    return loop_data.squeeze()

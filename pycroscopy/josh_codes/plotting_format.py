@@ -1,6 +1,4 @@
-def josh_test(name):
-    print(f'you typed in {name}, the test workeddd')
-
+from sklearn import (decomposition)
 
 def conduct_PCA(loops, n_components=15):
 

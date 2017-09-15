@@ -497,3 +497,7 @@ def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
     if print_PNG:
         plt.savefig(filename + '.png', format='png',
                     dpi=dpi, bbox_inches='tight')
+
+def pca_weights_as_embeddings(a=0):
+    #TODO add function that takes PCA compoents and converts them to embeddings
+    print('todo')

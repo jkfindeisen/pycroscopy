@@ -83,7 +83,7 @@ def interpolate_missing_points(loop_data):
         for j in range(loop_data.shape[1]):
 
             # Loops around the number of cycles
-            for k in range(loop_data.shape[3]):
+            for k in range(loop_data.shape[2]):
 
                if any(~np.isfinite(loop_data[i,j,:,k])):
 

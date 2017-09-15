@@ -6,6 +6,7 @@ from matplotlib import (pyplot as plt, animation, colors,
                         ticker, path, patches, patheffects)
 import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import string
 
 Path = path.Path
 PathPatch = patches.PathPatch
@@ -163,7 +164,7 @@ def layout_graphs_of_arb_number(graph):
 
 def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False,
                                 add_scalebar=False, filename='./PCA_maps', print_EPS=False,
-                                print_PNG=False, dpi=300, num_of_plots = False):
+                                print_PNG=False, dpi=300, num_of_plots = True):
     """
     Adds a colorbar to a imageplot
 
@@ -190,8 +191,8 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
     num_of_plots : int, optional
             number of principle componets to show
     """
-    if not num_of_plots:
-        num_of_plots = PCA_caca.n_components_
+    if num_of_plots:
+        num_of_plots = pca.n_components_
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(num_of_plots)
@@ -206,11 +207,11 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
     else:
         raise ValueError("data is of an incorrect size")
 
-    for i in range(pca.n_components_):
+    for i in range(num_of_plots):
         im = ax[i].imshow(pca.transform(loops)[:, i].reshape(original_size, original_size))
         ax[i].set_yticklabels('')
         ax[i].set_xticklabels('')
-        #ax[i].set_title(f'PC {i+1}')
+        #
 
         if add_colorbars:
             add_colorbar(ax[i], im)
@@ -218,7 +219,7 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
         # labels figures
         if letter_labels:
             labelfigs(ax[i], i)
-        labelfigs(ax[i], i, string_add=f'PC {i+1}', loc='bm')
+        labelfigs(ax[i], i, string_add='PC {0}'.format(i+1), loc='bm')
 
         if add_scalebar is not False:
             add_scalebar_to_figure(ax[i], add_scalebar[0], add_scalebar[1])
@@ -227,9 +228,56 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
 
     savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
 
-def plot_pca_values(pca):
+def plot_pca_values(voltage, pca, num_of_plots = True, set_ylim=True, letter_labels = False,
+                                filename='./PCA_vectors', print_EPS=False,
+                                print_PNG=False, dpi=300):
+    """
+    Adds a colorbar to a imageplot
 
+    Parameters
+    ----------
+    voltage : numpy array
+        voltage vector for the hysteresis loop
+    pca : model
+        previously computed pca
+    num_of_plots : int, optional
+        number of principle componets to show
+    set_ylim : int, optional
+        optional manual overide of y scaler
+    letter_labels : bool, optional
+        adds letter labels for use in publications
+    filename : str, optional
+        sets the path and filename for the exported images
+    print_EPS : bool, optional
+        to export as EPS
+    print_PNG : bool, optional
+        to export as PNG
+    dpi : int, optional
+        resolution of exported image
+    """
+    if num_of_plots:
+        num_of_plots = pca.n_components_
 
+    # creates the figures and axes in a pretty way
+    fig, ax = layout_graphs_of_arb_number(num_of_plots)
+
+    for i in range(num_of_plots):
+        ax[i].plot(voltage, pca.components_[i], 'k')
+        ax[i].set_xlabel('Voltage')
+        ax[i].set_ylabel('Amplitude (Arb. U.)')
+        ax[i].set_yticklabels('')
+        #ax[i].set_title('PC {0}'.format(i+1))
+        if not set_ylim:
+            ax[i].set_ylim(set_ylim[0], set_ylim[1])
+
+        # labels figures
+        if letter_labels:
+            labelfigs(ax[i], i)
+        labelfigs(ax[i], i, string_add='PC {0}'.format(i+1), loc='bm')
+
+    ddplt.tight_layout(pad=0, h_pad=0)
+
+    savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
 
 def add_colorbar(axes, plot, location='right', size=10, pad=0.05, format='%.1e'):
     """
@@ -315,6 +363,8 @@ def labelfigs(axes, number, style='wb', loc='br', string_add='', size=14, text_p
     elif loc == 'bm':
         y_value = y_max - .1 * (y_max - y_min)
         x_value = x_min + (x_max - x_min) / 2
+    else:
+        raise ValueError('Unknown string format imported please look at code for acceptable positions')
 
     if string_add == '':
 

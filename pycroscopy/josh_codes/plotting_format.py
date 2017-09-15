@@ -2,9 +2,13 @@ from sklearn import (decomposition)
 import numpy as np
 from scipy import (interpolate)
 import matplotlib.pyplot as plt
+from matplotlib import (pyplot as plt, animation, colors,
+                        ticker, path, patches, patheffects)
 import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+Path = path.Path
+PathPatch = patches.PathPatch
 
 def conduct_PCA(loops, n_components=15, verbose=True):
     """
@@ -157,7 +161,8 @@ def layout_graphs_of_arb_number(graph):
     return (fig, axes)
 
 
-def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False):
+def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False,
+                                add_scalebar=False):
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(15)
@@ -186,7 +191,8 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
             labelfigs(ax[i], i)
         labelfigs(ax[i], i, string_add=f'PC {i+1}', loc='bm')
 
-        #add_scalebar_to_figure(axes[i], 1500, 500)
+        if add_scalebar is not False:
+            add_scalebar_to_figure(ax[i], add_scalebar[0], add_scalebar[1])
 
     plt.tight_layout(pad=0, h_pad=0)
 
@@ -300,3 +306,85 @@ def labelfigs(axes, number, style='wb', loc='br', string_add='', size=14, text_p
                   va='center', color=formatting['color'],
                   path_effects=[patheffects.withStroke(linewidth=formatting['linewidth'],
                                                        foreground="k")])
+
+
+def add_scalebar_to_figure(axes, image_size, scale_size, units='nm', loc='br'):
+    """
+    Adds scalebar to figures
+
+    Parameters
+    ----------
+    axes : matplotlib axes
+        axes which to add the plot to
+    image_size : int
+        size of the image in nm
+    scale_size : str, optional
+        size of the scalebar in units of nm
+    units : str, optional
+        sets the units for the label
+    loc : str, optional
+        sets the location of the label
+    """
+
+    x_lim, y_lim = axes.get_xlim(), axes.get_ylim()
+    x_size, y_size = np.abs(np.floor(x_lim[1] - x_lim[0])), np.abs(np.floor(y_lim[1] - y_lim[0]))
+
+    fract = scale_size / image_size
+
+    x_point = np.linspace(x_lim[0], x_lim[1], np.floor(image_size))
+    y_point = np.linspace(y_lim[0], y_lim[1], np.floor(image_size))
+
+    if loc == 'br':
+        x_start = x_point[np.int(.9 * image_size // 1)]
+        x_end = x_point[np.int((.9 - fract) * image_size // 1)]
+        y_start = y_point[np.int(.1 * image_size // 1)]
+        y_end = y_point[np.int((.1 + .025) * image_size // 1)]
+        y_label_height = y_point[np.int((.1 + .075) * image_size // 1)]
+    elif loc == 'tr':
+        x_start = x_point[np.int(.9 * image_size // 1)]
+        x_end = x_point[np.int((.9 - fract) * image_size // 1)]
+        y_start = y_point[np.int(.9 * image_size // 1)]
+        y_end = y_point[np.int((.9 - .025) * image_size // 1)]
+        y_label_height = y_point[np.int((.9 - .075) * image_size // 1)]
+
+    path_maker(axes, [x_start, x_end, y_start, y_end], 'w', 'k', '-', 1)
+
+    axes.text((x_start + x_end) / 2,
+              y_label_height,
+              '{0} {1}'.format(scale_size, units),
+              size=14, weight='bold', ha='center',
+              va='center', color='w',
+              path_effects=[patheffects.withStroke(linewidth=1.5,
+                                                   foreground="k")])
+
+def path_maker(axes, locations, facecolor, edgecolor, linestyle, lineweight):
+    """
+    Adds scalebar to figures
+    TODO fix docstring
+    Parameters
+    ----------
+    axes : matplotlib axes
+        axes which to add the plot to
+    locations : int
+        size of the image in nm
+    facecolor : str, optional
+        size of the scalebar in units of nm
+    edgecolor : str, optional
+        sets the units for the label
+    linestyle : str, optional
+        sets the location of the label
+    lineweight : str, optional
+        sets the location of the label
+    """
+    vertices = []
+    codes = []
+    codes = [Path.MOVETO] + [Path.LINETO]*3 + [Path.CLOSEPOLY]
+    vertices = [(locations[0], locations[2]),
+                (locations[1], locations[2]),
+                (locations[1], locations[3]),
+                (locations[0], locations[3]),
+                (0, 0)]
+    vertices = np.array(vertices, float)
+    path = Path(vertices, codes)
+    pathpatch = PathPatch(path, facecolor=facecolor, edgecolor=edgecolor,ls=linestyle,lw=lineweight)
+    axes.add_patch( pathpatch )

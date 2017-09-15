@@ -162,7 +162,8 @@ def layout_graphs_of_arb_number(graph):
 
 
 def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False,
-                                add_scalebar=False):
+                                add_scalebar=False, filename='./PCA_maps', print_EPS=False,
+                                print_PNG=False, dpi=300):
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(15)
@@ -195,6 +196,8 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
             add_scalebar_to_figure(ax[i], add_scalebar[0], add_scalebar[1])
 
     plt.tight_layout(pad=0, h_pad=0)
+
+    savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
 
 
 def add_colorbar(axes, plot, location='right', size=10, pad=0.05, format='%.1e'):
@@ -388,3 +391,28 @@ def path_maker(axes, locations, facecolor, edgecolor, linestyle, lineweight):
     path = Path(vertices, codes)
     pathpatch = PathPatch(path, facecolor=facecolor, edgecolor=edgecolor,ls=linestyle,lw=lineweight)
     axes.add_patch( pathpatch )
+
+def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
+    """
+    Adds path to figure
+
+    Parameters
+    ----------
+    filename : str
+        path to save file
+    dpi : int, optional
+        resolution to save image
+    print_EPS : bool, optional
+        selects if export the EPS
+    print_PNG : bool, optional
+        selects if print the PNG
+    """
+    # Saves figures at EPS
+    if print_EPS:
+        plt.savefig(filename + '.eps', format='eps',
+                    dpi=dpi, bbox_inches='tight')
+
+    # Saves figures as PNG
+    if print_PNG:
+        plt.savefig(filename + '.png', format='png',
+                    dpi=dpi, bbox_inches='tight')

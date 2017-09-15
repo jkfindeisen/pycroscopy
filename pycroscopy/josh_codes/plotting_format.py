@@ -500,7 +500,7 @@ def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
         plt.savefig(filename + '.png', format='png',
                     dpi=dpi, bbox_inches='tight')
 
-def pca_weights_as_embeddings(pca, loops, num_of_components=True):
+def pca_weights_as_embeddings(pca, loops, num_of_components=True, verbose=True):
     """
     Computes the eigenvalue maps computed from PCA
 

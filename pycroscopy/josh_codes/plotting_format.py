@@ -153,15 +153,15 @@ def layout_graphs_of_arb_number(graph):
 
 def plot_pca_maps(pca, loops):
 
-        # resizes the array for hyperspectral data
-        if loops.ndim == 3:
-            original_size = loops.shape[0]
-            loops = loops.reshape(-1, loops.shape[2])
-            verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
-        elif loops.ndim == 2:
-            pass
-        else:
-            raise ValueError("data is of an incorrect size")
+    # resizes the array for hyperspectral data
+    if loops.ndim == 3:
+        original_size = loops.shape[0]
+        loops = loops.reshape(-1, loops.shape[2])
+        verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
+    elif loops.ndim == 2:
+        pass
+    else:
+        raise ValueError("data is of an incorrect size")
 
     for i in range(pca.n_components_):
         im = ax[i].imshow(pca.transform(loops)[:, i].reshape(original_size, original_size))
@@ -180,4 +180,4 @@ def plot_pca_maps(pca, loops):
         #
         #add_scalebar_to_figure(axes[i], 1500, 500)
 
-        plt.tight_layout(pad=1, h_pad=1.5)
+    plt.tight_layout(pad=1, h_pad=1.5)

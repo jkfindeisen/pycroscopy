@@ -164,6 +164,30 @@ def layout_graphs_of_arb_number(graph):
 def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False,
                                 add_scalebar=False, filename='./PCA_maps', print_EPS=False,
                                 print_PNG=False, dpi=300):
+    """
+    Adds a colorbar to a imageplot
+
+    Parameters
+    ----------
+    pca : model
+        previously computed pca
+    add_colorbars : bool, optional
+        adds colorbars to images
+    verbose : bool, optional
+        sets the verbosity level
+    letter_labels : bool, optional
+        adds letter labels for use in publications
+    add_scalebar : bool, optional
+        sets whether a scalebar is added to the maps
+    filename : str, optional
+        sets the path and filename for the exported images
+    print_EPS : bool, optional
+        to export as EPS
+    print_PNG : bool, optional
+        to export as PNG
+    dpi : int, optional
+        resolution of exported image
+    """
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(15)

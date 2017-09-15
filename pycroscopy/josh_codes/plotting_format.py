@@ -37,7 +37,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     if loops.ndim == 3:
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, 'shape of data resized to [{0}x {1}]'.fomat(loops.shape[0], loops.shape[1]))
+        verbose_print(verbose, 'shape of data resized to [{0}x {1}]'.format(loops.shape[0], loops.shape[1]))
     elif loops.ndim == 2:
         pass
     else:

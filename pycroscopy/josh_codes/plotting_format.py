@@ -37,7 +37,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     if loops.ndim == 3:
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
+        verbose_print(verbose, 'shape of data resized to [{0}x {1}]'.fomat(loops.shape[0], loops.shape[1]))
     elif loops.ndim == 2:
         pass
     else:
@@ -171,7 +171,7 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
     if loops.ndim == 3:
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
+        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(loops.shape[0],loops.shape[1]))
     elif loops.ndim == 2:
         pass
     else:
@@ -219,7 +219,7 @@ def add_colorbar(axes, plot, location='right', size=10, pad=0.05, format='%.1e')
 
     # Adds the scalebar
     divider = make_axes_locatable(axes)
-    cax = divider.append_axes(location, size=f'{size}%', pad=pad)
+    cax = divider.append_axes(location, size='{0}%'.format(size), pad=pad)
     cbar = plt.colorbar(plot, cax=cax, format=format)
 
 # Function to add text labels to figure

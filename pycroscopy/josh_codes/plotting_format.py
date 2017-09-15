@@ -151,7 +151,10 @@ def layout_graphs_of_arb_number(graph):
 
     return (fig, axes)
 
-def plot_pca_maps(pca, loops):
+def plot_pca_maps(pca, loops, verbose=False):
+
+    # creates the figures and axes in a pretty way
+    fig, ax = layout_graphs_of_arb_number(15)
 
     # resizes the array for hyperspectral data
     if loops.ndim == 3:
@@ -169,11 +172,7 @@ def plot_pca_maps(pca, loops):
         ax[i].set_xticklabels('')
         ax[i].set_title(f'PC {i+1}')
 
-        ## Adds the scalebar
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes('right', size='10%', pad=0.05)
-        #cbar = plt.colorbar(im, cax=cax, format='%.1e')
-        #
+
         ## labels figures
         #labelfigs(ax[i], i)
         #labelfigs(ax[i], i, string_add=f'PC {i+1}', loc='bm')
@@ -181,3 +180,29 @@ def plot_pca_maps(pca, loops):
         #add_scalebar_to_figure(axes[i], 1500, 500)
 
     plt.tight_layout(pad=1, h_pad=1.5)
+
+def add_colorbar(axes, plot, location = 'right', size=10, pad=0.05, format='%.1e'):
+
+"""
+Adds a colorbar to a imageplot
+
+Parameters
+----------
+axes : matplotlib axes
+    axes which to add the plot to
+axes : matplotlib plot
+    Plot being references for the scalebar
+location : str, optional
+    position to place the colorbar
+size : int, optional
+    percent size of colorbar realitive to the plot
+pad : float, optional
+    gap between colorbar and plot
+format : str, optional
+    string format for the labels on colorbar
+"""
+
+        # Adds the scalebar
+        divider = make_axes_locatable(axes)
+        cax = divider.append_axes(location, size=f'{size}%', pad=pad)
+        cbar = plt.colorbar(plot, cax=cax, format=format)

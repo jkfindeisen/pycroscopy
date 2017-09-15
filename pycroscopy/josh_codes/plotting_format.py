@@ -163,7 +163,7 @@ def layout_graphs_of_arb_number(graph):
 
 def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False,
                                 add_scalebar=False, filename='./PCA_maps', print_EPS=False,
-                                print_PNG=False, dpi=300):
+                                print_PNG=False, dpi=300, num_of_plots = False):
     """
     Adds a colorbar to a imageplot
 
@@ -187,10 +187,14 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
         to export as PNG
     dpi : int, optional
         resolution of exported image
+    num_of_plots : int, optional
+            number of principle componets to show
     """
+    if not num_of_plots:
+        num_of_plots = PCA_caca.n_components_
 
     # creates the figures and axes in a pretty way
-    fig, ax = layout_graphs_of_arb_number(15)
+    fig, ax = layout_graphs_of_arb_number(num_of_plots)
 
     # resizes the array for hyperspectral data
     if loops.ndim == 3:
@@ -222,6 +226,9 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
     plt.tight_layout(pad=0, h_pad=0)
 
     savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
+
+def plot_pca_values(pca):
+
 
 
 def add_colorbar(axes, plot, location='right', size=10, pad=0.05, format='%.1e'):

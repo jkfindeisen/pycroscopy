@@ -3,6 +3,8 @@ import numpy as np
 from scipy import (interpolate)
 import matplotlib.pyplot as plt
 import os
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 
 def conduct_PCA(loops, n_components=15, verbose=True):
     """
@@ -38,7 +40,8 @@ def conduct_PCA(loops, n_components=15, verbose=True):
         raise ValueError("data is of an incorrect size")
 
     if np.isnan(loops).any():
-        raise ValueError('data has infinite values consider using a imputer \n see interpolate_missing_points function')
+        raise ValueError(
+            'data has infinite values consider using a imputer \n see interpolate_missing_points function')
 
     # Sets the number of components to save
     pca = decomposition.PCA(n_components=n_components)
@@ -63,6 +66,7 @@ def verbose_print(verbose, *args):
     if verbose:
         print(*args)
 
+
 def interpolate_missing_points(loop_data):
     """
     Interpolates bad pixels in piezoelectric hystereis loops.\n
@@ -82,7 +86,7 @@ def interpolate_missing_points(loop_data):
     # reshapes the data such that it can run with different data sizes
     if loop_data.ndim == 2:
         loop_data = loop_data.reshape(np.sqrt(loop_data.shape[0]),
-                                                        np.sqrt(loop_data.shape[0]),-1)
+                                      np.sqrt(loop_data.shape[0]), -1)
         loop_data = np.expand_dims(loop_data, axis=0)
     elif loop_data.ndim == 3:
         loop_data = np.expand_dims(loop_data, axis=0)
@@ -96,17 +100,18 @@ def interpolate_missing_points(loop_data):
             # Loops around the number of cycles
             for k in range(loop_data.shape[3]):
 
-               if any(~np.isfinite(loop_data[i,j,:,k])):
+                if any(~np.isfinite(loop_data[i, j, :, k])):
 
-                    true_ind = np.where(~np.isnan(loop_data[i,j,:,k]))
-                    point_values = np.linspace(0,1,loop_data.shape[2])
+                    true_ind = np.where(~np.isnan(loop_data[i, j, :, k]))
+                    point_values = np.linspace(0, 1, loop_data.shape[2])
                     spline = interpolate.InterpolatedUnivariateSpline(point_values[true_ind],
-                                                            loop_data[i,j,true_ind,k].squeeze())
-                    ind = np.where(np.isnan(loop_data[i,j,:,k]))
+                                                                      loop_data[i, j, true_ind, k].squeeze())
+                    ind = np.where(np.isnan(loop_data[i, j, :, k]))
                     val = spline(point_values[ind])
-                    loop_data[i,j,ind,k] = val
+                    loop_data[i, j, ind, k] = val
 
     return loop_data.squeeze()
+
 
 def layout_graphs_of_arb_number(graph):
     """
@@ -151,7 +156,8 @@ def layout_graphs_of_arb_number(graph):
 
     return (fig, axes)
 
-def plot_pca_maps(pca, loops, verbose=False):
+
+def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False):
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(15)
@@ -170,39 +176,127 @@ def plot_pca_maps(pca, loops, verbose=False):
         im = ax[i].imshow(pca.transform(loops)[:, i].reshape(original_size, original_size))
         ax[i].set_yticklabels('')
         ax[i].set_xticklabels('')
-        ax[i].set_title(f'PC {i+1}')
+        #ax[i].set_title(f'PC {i+1}')
 
+        if add_colorbars:
+            add_colorbar(ax[i], im)
 
-        ## labels figures
-        #labelfigs(ax[i], i)
-        #labelfigs(ax[i], i, string_add=f'PC {i+1}', loc='bm')
-        #
+        # labels figures
+        if letter_labels:
+            labelfigs(ax[i], i)
+        labelfigs(ax[i], i, string_add=f'PC {i+1}', loc='bm')
+
         #add_scalebar_to_figure(axes[i], 1500, 500)
 
-    plt.tight_layout(pad=1, h_pad=1.5)
+    plt.tight_layout(pad=0, h_pad=0)
 
-def add_colorbar(axes, plot, location = 'right', size=10, pad=0.05, format='%.1e'):
 
-"""
-Adds a colorbar to a imageplot
+def add_colorbar(axes, plot, location='right', size=10, pad=0.05, format='%.1e'):
+    """
+    Adds a colorbar to a imageplot
 
-Parameters
-----------
-axes : matplotlib axes
-    axes which to add the plot to
-axes : matplotlib plot
-    Plot being references for the scalebar
-location : str, optional
-    position to place the colorbar
-size : int, optional
-    percent size of colorbar realitive to the plot
-pad : float, optional
-    gap between colorbar and plot
-format : str, optional
-    string format for the labels on colorbar
-"""
+    Parameters
+    ----------
+    axes : matplotlib axes
+        axes which to add the plot to
+    axes : matplotlib plot
+        Plot being references for the scalebar
+    location : str, optional
+        position to place the colorbar
+    size : int, optional
+        percent size of colorbar realitive to the plot
+    pad : float, optional
+        gap between colorbar and plot
+    format : str, optional
+        string format for the labels on colorbar
+    """
 
-        # Adds the scalebar
-        divider = make_axes_locatable(axes)
-        cax = divider.append_axes(location, size=f'{size}%', pad=pad)
-        cbar = plt.colorbar(plot, cax=cax, format=format)
+    # Adds the scalebar
+    divider = make_axes_locatable(axes)
+    cax = divider.append_axes(location, size=f'{size}%', pad=pad)
+    cbar = plt.colorbar(plot, cax=cax, format=format)
+
+# Function to add text labels to figure
+
+
+def labelfigs(axes, number, style='wb', loc='br', string_add='', size=14, text_pos='center'):
+    """
+    Adds labels to figures
+
+    Parameters
+    ----------
+    axes : matplotlib axes
+        axes which to add the plot to
+    number : int
+        letter number
+    style : str, optional
+        sets the color of the letters
+    loc : str, optional
+        sets the location of the label
+    string_add : str, optional
+        custom string as the label
+    size : int, optional
+        sets the fontsize for the label
+    text_pos : str, optional
+        set the justification of the label
+    """
+
+    # Sets up various color options
+    formating_key = {'wb': dict(color='w',
+                                linewidth=1.5),
+                     'b': dict(color='k',
+                               linewidth=0),
+                     'w': dict(color='w',
+                               linewidth=0)}
+
+    # Stores the selected option
+    formatting = formating_key[style]
+
+    # finds the position for the label
+    x_min, x_max = axes.get_xlim()
+    y_min, y_max = axes.get_ylim()
+    x_value = .08 * (x_max - x_min) + x_min
+
+    if loc == 'br':
+        y_value = y_max - .1 * (y_max - y_min)
+        x_value = .08 * (x_max - x_min) + x_min
+    elif loc == 'tr':
+        y_value = y_max - .9 * (y_max - y_min)
+        x_value = .08 * (x_max - x_min) + x_min
+    elif loc == 'bl':
+        y_value = y_max - .1 * (y_max - y_min)
+        x_value = x_max - .08 * (x_max - x_min)
+    elif loc == 'tl':
+        y_value = y_max - .9 * (y_max - y_min)
+        x_value = x_max - .08 * (x_max - x_min)
+    elif loc == 'tm':
+        y_value = y_max - .9 * (y_max - y_min)
+        x_value = x_min + (x_max - x_min) / 2
+    elif loc == 'bm':
+        y_value = y_max - .1 * (y_max - y_min)
+        x_value = x_min + (x_max - x_min) / 2
+
+    if string_add == '':
+
+        # Turns to image number into a label
+        if number < 26:
+            axes.text(x_value, y_value, string.ascii_lowercase[number],
+                      size=14, weight='bold', ha=text_pos,
+                      va='center', color=formatting['color'],
+                      path_effects=[patheffects.withStroke(linewidth=formatting['linewidth'],
+                                                           foreground="k")])
+
+        # allows for double letter index
+        else:
+            axes.text(x_value, y_value, string.ascii_lowercase[0] + string.ascii_lowercase[number - 26],
+                      size=14, weight='bold', ha=text_pos,
+                      va='center', color=formatting['color'],
+                      path_effects=[patheffects.withStroke(linewidth=formatting['linewidth'],
+                                                           foreground="k")])
+    else:
+
+        axes.text(x_value, y_value, string_add,
+                  size=14, weight='bold', ha=text_pos,
+                  va='center', color=formatting['color'],
+                  path_effects=[patheffects.withStroke(linewidth=formatting['linewidth'],
+                                                       foreground="k")])

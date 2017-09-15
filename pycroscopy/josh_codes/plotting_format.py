@@ -196,19 +196,21 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(num_of_plots)
+        # resizes the array for hyperspectral data
 
-    # resizes the array for hyperspectral data
     if loops.ndim == 3:
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
         verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(loops.shape[0],loops.shape[1]))
     elif loops.ndim == 2:
-        pass
+        original_size = np.sqrt(loops.shape[0])
     else:
         raise ValueError("data is of an incorrect size")
 
+    PCA_maps = pca_weights_as_embeddings(pca, loops, num_of_components=num_of_plots)
+
     for i in range(num_of_plots):
-        im = ax[i].imshow(pca.transform(loops)[:, i].reshape(original_size, original_size))
+        im = ax[i].imshow(PCA_maps[:,i].reshape(original_size, original_size))
         ax[i].set_yticklabels('')
         ax[i].set_xticklabels('')
         #
@@ -275,7 +277,7 @@ def plot_pca_values(voltage, pca, num_of_plots = True, set_ylim=True, letter_lab
             labelfigs(ax[i], i)
         labelfigs(ax[i], i, string_add='PC {0}'.format(i+1), loc='bm')
 
-    ddplt.tight_layout(pad=0, h_pad=0)
+    plt.tight_layout(pad=0, h_pad=0)
 
     savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
 
@@ -498,6 +500,15 @@ def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
         plt.savefig(filename + '.png', format='png',
                     dpi=dpi, bbox_inches='tight')
 
-def pca_weights_as_embeddings(a=0):
-    #TODO add function that takes PCA compoents and converts them to embeddings
-    print('todo')
+def pca_weights_as_embeddings(pca, loops, num_of_components=True):
+
+    if loops.ndim == 3:
+        loops = loops.reshape(-1, loops.shape[2])
+        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(loops.shape[0],loops.shape[1]))
+
+    if num_of_components:
+        num_of_components = pca.n_components_
+
+    PCA_embedding = pca.transform(loops)[:, 0:num_of_components]
+
+    return (PCA_embedding)

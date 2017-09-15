@@ -36,8 +36,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
         raise ValueError("data is of an incorrect size")
 
     if np.isnan(loops).any():
-        raise ValueError('''data has non-values consider using a imputer \n
-                                    see imputer_values function''')
+        raise ValueError('data has infinite values consider using a imputer \n see interpolate_missing_points function')
 
     # Sets the number of components to save
     pca = decomposition.PCA(n_components=n_components)
@@ -60,3 +59,40 @@ def conduct_PCA(loops, n_components=15, verbose=True):
 def verbose_print(verbose, *args):
     if verbose:
         print(*args)
+
+def interpolate_missing_points(loop_data):
+    """
+    Interpolates bad pixels in piezoelectric hystereis loops.\n
+    The interpolation of missing points alows for machine learning operations
+
+    Parameters
+    ----------
+    loop_data : numpy array
+        arary of loops
+
+    Returns
+    -------
+    loop_data_cleaned : numpy array
+        arary of loops
+    """
+
+    # Loops around the x index
+    for i in range(loop_data.shape[0]):
+
+        # Loops around the y index
+        for j in range(loop_data.shape[1]):
+
+            # Loops around the number of cycles
+            for k in range(loop_data.shape[3]):
+
+               if any(~np.isfinite(loop_data[i,j,:,k])):
+
+                    true_ind = np.where(~np.isnan(loop_data[i,j,:,k]))
+                    point_values = np.linspace(0,1,loop_data.shape[2])
+                    spline = interpolate.InterpolatedUnivariateSpline(point_values[true_ind],
+                                                            loop_data[i,j,true_ind,k].squeeze())
+                    ind = np.where(np.isnan(loop_data[i,j,:,k]))
+                    val = spline(point_values[ind])
+                    loop_data[i,j,ind,k] = val
+
+    return loop_data

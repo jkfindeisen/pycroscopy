@@ -1,6 +1,8 @@
 from sklearn import (decomposition)
 import numpy as np
 from scipy import (interpolate)
+import matplotlib.pyplot as plt
+import os
 
 def conduct_PCA(loops, n_components=15, verbose=True):
     """
@@ -104,3 +106,46 @@ def interpolate_missing_points(loop_data):
                     loop_data[i,j,ind,k] = val
 
     return loop_data.squeeze()
+
+def layout_graphs_of_arb_number(graph):
+    """
+    Sets the layout of graphs in matplotlib in a pretty way based on the number of plots
+
+    Parameters
+    ----------
+    graphs : int
+        number of axes to make
+
+    Returns
+    -------
+    fig : matplotlib figure
+        handel to figure being created.
+    axes : numpy array (axes)
+        numpy array of axes that are created.
+    """
+
+    # Selects the number of columns to have in the graph
+    if graph < 3:
+        mod = 2
+    elif graph < 5:
+        mod = 3
+    elif graph < 10:
+        mod = 4
+    elif graph < 17:
+        mod = 5
+    elif graph < 26:
+        mod = 6
+    elif graph < 37:
+        mod = 7
+
+    # builds the figure based on the number of graphs and selected number of columns
+    fig, axes = plt.subplots(graph // mod + (graph % mod > 0), mod,
+                             figsize=(3 * mod, 3 * (graph // mod + (graph % mod > 0))))
+
+    # deletes extra unneeded axes
+    axes = axes.reshape(-1)
+    for i in range(axes.shape[0]):
+        if i + 1 > graph:
+            fig.delaxes(axes[i])
+
+    return (fig, axes)

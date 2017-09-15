@@ -1,4 +1,5 @@
 from sklearn import (decomposition)
+import numpy as np
 
 
 def conduct_PCA(loops, n_components=15, verbose=True):
@@ -25,13 +26,18 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     """
 
     # resizes the array for hyperspectral data
-    if loops.size == 3:
+    if loops.ndim == 3:
         original_size = loops.shape[0]
-        loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, f'shape of data resized to [{loop.shape[0]} x {loop.shape[1]}]')
-    elif loop.size == 2:
+        loops = loops.reshape(-1, loops.shape[2])
+        verbose_print(verbose, f'shape of data resized to [{loops.shape[0]} x {loops.shape[1]}]')
+    elif loops.size == 2:
+        pass
     else:
         raise ValueError("data is of an incorrect size")
+
+    if np.isnan(loops).any():
+        raise ValueError('''data has non-values consider using a imputer \n
+                                    see imputer_values function''')
 
     # Sets the number of components to save
     pca = decomposition.PCA(n_components=n_components)
@@ -45,8 +51,8 @@ def conduct_PCA(loops, n_components=15, verbose=True):
 
     # resized the array for hyperspectral data
     if loops.size == 3:
-        PCA.reshape(original_size, original_size, -1)
-        PCA_reconstructed.reshape(original_size, original_size, -1)
+        PCA = PCA.reshape(original_size, original_size, -1)
+        PCA_reconstructed = PCA_reconstructed.reshape(original_size, original_size, -1)
 
     return(PCA, PCA_reconstructed)
 

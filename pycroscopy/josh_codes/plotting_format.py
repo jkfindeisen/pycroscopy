@@ -51,8 +51,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     PCA_reconstructed = pca.inverse_transform(pca.transform(loops))
 
     # resized the array for hyperspectral data
-    if loops.size == 3:
-        PCA = PCA.reshape(original_size, original_size, -1)
+    if loops.ndim == 3:
         PCA_reconstructed = PCA_reconstructed.reshape(original_size, original_size, -1)
 
     return(PCA, PCA_reconstructed)

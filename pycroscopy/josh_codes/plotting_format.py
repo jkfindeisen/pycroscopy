@@ -8,9 +8,11 @@ import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import string
 from sklearn.manifold import TSNE
+from os.path import join as pjoin
 
 Path = path.Path
 PathPatch = patches.PathPatch
+
 
 def conduct_PCA(loops, n_components=15, verbose=True):
     """
@@ -39,7 +41,8 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     if loops.ndim == 3:
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, 'shape of data resized to [{0}x {1}]'.format(loops.shape[0], loops.shape[1]))
+        verbose_print(verbose, 'shape of data resized to [{0}x {1}]'.format(
+            loops.shape[0], loops.shape[1]))
     elif loops.ndim == 2:
         pass
     else:
@@ -163,9 +166,9 @@ def layout_graphs_of_arb_number(graph):
     return (fig, axes)
 
 
-def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels = False,
-                                add_scalebar=False, filename='./PCA_maps', print_EPS=False,
-                                print_PNG=False, dpi=300, num_of_plots = True):
+def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels=False,
+                  add_scalebar=False, filename='./PCA_maps', print_EPS=False,
+                  print_PNG=False, dpi=300, num_of_plots=True):
     """
     Adds a colorbar to a imageplot
 
@@ -197,12 +200,13 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
 
     # creates the figures and axes in a pretty way
     fig, ax = layout_graphs_of_arb_number(num_of_plots)
-        # resizes the array for hyperspectral data
+    # resizes the array for hyperspectral data
 
     if loops.ndim == 3:
         original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(loops.shape[0],loops.shape[1]))
+        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(
+            loops.shape[0], loops.shape[1]))
     elif loops.ndim == 2:
         original_size = np.sqrt(loops.shape[0])
     else:
@@ -211,7 +215,7 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
     PCA_maps = pca_weights_as_embeddings(pca, loops, num_of_components=num_of_plots)
 
     for i in range(num_of_plots):
-        im = ax[i].imshow(PCA_maps[:,i].reshape(original_size, original_size))
+        im = ax[i].imshow(PCA_maps[:, i].reshape(original_size, original_size))
         ax[i].set_yticklabels('')
         ax[i].set_xticklabels('')
         #
@@ -222,7 +226,7 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
         # labels figures
         if letter_labels:
             labelfigs(ax[i], i)
-        labelfigs(ax[i], i, string_add='PC {0}'.format(i+1), loc='bm')
+        labelfigs(ax[i], i, string_add='PC {0}'.format(i + 1), loc='bm')
 
         if add_scalebar is not False:
             add_scalebar_to_figure(ax[i], add_scalebar[0], add_scalebar[1])
@@ -231,9 +235,10 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels =
 
     savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
 
-def plot_pca_values(voltage, pca, num_of_plots = True, set_ylim=True, letter_labels = False,
-                                filename='./PCA_vectors', print_EPS=False,
-                                print_PNG=False, dpi=300):
+
+def plot_pca_values(voltage, pca, num_of_plots=True, set_ylim=True, letter_labels=False,
+                    filename='./PCA_vectors', print_EPS=False,
+                    print_PNG=False, dpi=300):
     """
     Adds a colorbar to a imageplot
 
@@ -276,11 +281,12 @@ def plot_pca_values(voltage, pca, num_of_plots = True, set_ylim=True, letter_lab
         # labels figures
         if letter_labels:
             labelfigs(ax[i], i)
-        labelfigs(ax[i], i, string_add='PC {0}'.format(i+1), loc='bm')
+        labelfigs(ax[i], i, string_add='PC {0}'.format(i + 1), loc='bm')
 
     plt.tight_layout(pad=0, h_pad=0)
 
     savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
+
 
 def add_colorbar(axes, plot, location='right', size=10, pad=0.05, format='%.1e'):
     """
@@ -367,7 +373,8 @@ def labelfigs(axes, number, style='wb', loc='br', string_add='', size=14, text_p
         y_value = y_max - .1 * (y_max - y_min)
         x_value = x_min + (x_max - x_min) / 2
     else:
-        raise ValueError('Unknown string format imported please look at code for acceptable positions')
+        raise ValueError(
+            'Unknown string format imported please look at code for acceptable positions')
 
     if string_add == '':
 
@@ -444,6 +451,7 @@ def add_scalebar_to_figure(axes, image_size, scale_size, units='nm', loc='br'):
               path_effects=[patheffects.withStroke(linewidth=1.5,
                                                    foreground="k")])
 
+
 def path_maker(axes, locations, facecolor, edgecolor, linestyle, lineweight):
     """
     Adds path to figure
@@ -465,7 +473,7 @@ def path_maker(axes, locations, facecolor, edgecolor, linestyle, lineweight):
     """
     vertices = []
     codes = []
-    codes = [Path.MOVETO] + [Path.LINETO]*3 + [Path.CLOSEPOLY]
+    codes = [Path.MOVETO] + [Path.LINETO] * 3 + [Path.CLOSEPOLY]
     vertices = [(locations[0], locations[2]),
                 (locations[1], locations[2]),
                 (locations[1], locations[3]),
@@ -473,10 +481,12 @@ def path_maker(axes, locations, facecolor, edgecolor, linestyle, lineweight):
                 (0, 0)]
     vertices = np.array(vertices, float)
     path = Path(vertices, codes)
-    pathpatch = PathPatch(path, facecolor=facecolor, edgecolor=edgecolor,ls=linestyle,lw=lineweight)
-    axes.add_patch( pathpatch )
+    pathpatch = PathPatch(path, facecolor=facecolor, edgecolor=edgecolor,
+                          ls=linestyle, lw=lineweight)
+    axes.add_patch(pathpatch)
 
-def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
+
+def savefig(filename, dpi=300, print_EPS=False, print_PNG=False):
     """
     Adds path to figure
 
@@ -501,6 +511,7 @@ def savefig(filename, dpi=300, print_EPS=False, print_PNG = False):
         plt.savefig(filename + '.png', format='png',
                     dpi=dpi, bbox_inches='tight')
 
+
 def pca_weights_as_embeddings(pca, loops, num_of_components=0, verbose=True):
     """
     Computes the eigenvalue maps computed from PCA
@@ -523,7 +534,8 @@ def pca_weights_as_embeddings(pca, loops, num_of_components=0, verbose=True):
     """
     if loops.ndim == 3:
         loops = loops.reshape(-1, loops.shape[2])
-        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(loops.shape[0],loops.shape[1]))
+        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(
+            loops.shape[0], loops.shape[1]))
 
     if num_of_components == 0:
         num_of_components = pca.n_components_
@@ -532,12 +544,12 @@ def pca_weights_as_embeddings(pca, loops, num_of_components=0, verbose=True):
 
     return (PCA_embedding)
 
-def T_SNE(encodings, n_components=2, perplexity=30.0, early_exaggeration=12.0,
-                learning_rate=200.0, n_iter=1000, n_iter_without_progress=300,
-                min_grad_norm=1e-07, metric='euclidean', init='random', verbose=0,
-                random_state=None, method='barnes_hut', angle=0.5,
-                save_results = False, file_name = ''):
 
+def T_SNE(encodings, n_components=2, perplexity=30.0, early_exaggeration=12.0,
+          learning_rate=200.0, n_iter=1000, n_iter_without_progress=300,
+          min_grad_norm=1e-07, metric='euclidean', init='random', verbose=0,
+          random_state=None, method='barnes_hut', angle=0.5,
+          save_results=False, file_name=''):
     """t-distributed Stochastic Neighbor Embedding.
 
     t-SNE [1] is a tool to visualize high-dimensional data. It converts
@@ -695,17 +707,111 @@ def T_SNE(encodings, n_components=2, perplexity=30.0, early_exaggeration=12.0,
         http://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf"""
 
     TSNE_model = TSNE(n_components=n_components,
-                                        perplexity=perplexity,
-                                        early_exaggeration=early_exaggeration,
-                                        learning_rate = learning_rate,
-                                        n_iter=n_iter, n_iter_without_progress=n_iter_without_progress,
-                                        min_grad_norm=min_grad_norm,
-                                        metric=metric, init=init, verbose=verbose,
-                                        random_state=random_state, method=method,
-                                        angle=angle)
+                      perplexity=perplexity,
+                      early_exaggeration=early_exaggeration,
+                      learning_rate=learning_rate,
+                      n_iter=n_iter, n_iter_without_progress=n_iter_without_progress,
+                      min_grad_norm=min_grad_norm,
+                      metric=metric, init=init, verbose=verbose,
+                      random_state=random_state, method=method,
+                      angle=angle)
 
     print('Working. TSNE can take some time')
 
     TSNE_Results = TSNE_model.fit_transform(encodings)
 
+    if save_results:
+        folder_path = make_folder('TSNE')
+        file_name_ = file_name + '_comp_{0}_per_{1}_lr_{2}_iter_{3}'.format(n_components,
+                                                                             perplexity,
+                                                                             learning_rate,
+                                                                             n_iter)
+        file_name_ = prevent_file_overwrite(pjoin(folder_path, file_name_), 'npy')
+        np.save(pjoin(file_name_), TSNE_Results)
+
     return(TSNE_Results)
+
+
+def make_folder(folder_name, root='./'):
+    """
+    creates a new folder
+
+    Parameters
+    ----------
+    folder_name : str
+        name of the folder
+    root : str, optional
+        pass the root path
+    """
+
+    folder = pjoin(root, '{}'.format(folder_name))
+    os.makedirs(folder, exist_ok=True)
+
+    return (folder)
+
+def prevent_file_overwrite(file_name, ext):
+    """
+    makes sure file being saved does not overwrite existing
+
+    Parameters
+    ----------
+    file_name : str
+        name of the file
+    ext : str
+        the file extension
+    """
+
+    count=0
+    file_name  = file_name + '.' + ext
+    while os.path.isfile(file_name):
+        if file_name.find('_run') == -1:
+            file_name = file_name[:-4]
+            file_name = file_name + '_run_{0:02d}.'.format(count) + ext
+        else:
+            count =+ 1
+            file_name = file_name[:file_name.find('run')+4] +'{0:02d}.npy'.format(count) + ext
+
+    return(file_name[:-len(ext)-1])
+
+def rgb_color_map(data, add_scalebar = False, print_EPS=False,
+                                print_PNG=False, filename='RGB_maps', dpi=300):
+
+        """
+        Plots 3d hyperspectral data as an RGB image for visualization
+        TODO: need to improve colormaps used
+
+        Parameters
+        ----------
+        data : numpy array
+            voltage vector for the hysteresis loop
+        add_scalebar : int, optional
+            vector with 2 values first is the scan size second is the marker size
+        filename : str, optional
+            sets the path and filename for the exported images
+        print_EPS : bool, optional
+            to export as EPS
+        print_PNG : bool, optional
+            to export as PNG
+        dpi : int, optional
+            resolution of exported image
+        """
+
+    fig = plt.figure(figsize=(3,3), dpi=300)
+    ax = fig.add_subplot(111) # 1 Row, 1 Column and the first axes in this grid
+
+    # Pre-allocates the matrix
+    RGB = np.ones((data.shape[0],3))
+
+    for i in range(3):
+        data[:,i] -= np.nanmin(data[:,i])
+        RGB[:,i] = (data[:,i]/(np.nanmax(data[:,i])))
+
+    size = np.sqrt(data.shape[0]).astype('int')
+    im = ax.imshow(RGB.reshape(size,size,3))
+    ax.set_yticklabels('')
+    ax.set_xticklabels('')
+
+    if add_scalebar is not False:
+        add_scalebar_to_figure(ax, add_scalebar[0], add_scalebar[1])
+
+    savefig(filename, dpi=dpi, print_EPS=print_EPS, print_PNG=print_PNG)

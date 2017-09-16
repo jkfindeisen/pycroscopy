@@ -796,7 +796,7 @@ def rgb_color_map(data, add_scalebar = False, print_EPS=False,
             resolution of exported image
         """
 
-    fig = plt.figure(figsize=(3,3), dpi=300)
+    fig = plt.figure(figsize=(3,3), dpi=300))
     ax = fig.add_subplot(111) # 1 Row, 1 Column and the first axes in this grid
 
     # Pre-allocates the matrix

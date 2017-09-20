@@ -236,6 +236,74 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels=F
     savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
 
 
+def plot_embedding_maps(data, add_colorbars=True, verbose=False, letter_labels=False,
+                        add_scalebar=False, filename='./embedding_maps', print_EPS=False,
+                        print_PNG=False, dpi=300, num_of_plots=True):
+    """
+    Adds a colorbar to a imageplot
+
+    Parameters
+    ----------
+    data : raw data to plot of embeddings
+        data of embeddings
+    add_colorbars : bool, optional
+        adds colorbars to images
+    verbose : bool, optional
+        sets the verbosity level
+    letter_labels : bool, optional
+        adds letter labels for use in publications
+    add_scalebar : bool, optional
+        sets whether a scalebar is added to the maps
+    filename : str, optional
+        sets the path and filename for the exported images
+    print_EPS : bool, optional
+        to export as EPS
+    print_PNG : bool, optional
+        to export as PNG
+    dpi : int, optional
+        resolution of exported image
+    num_of_plots : int, optional
+            number of principle componets to show
+    """
+    if num_of_plots:
+        num_of_plots = data.shape[data.ndim - 1]
+
+    # creates the figures and axes in a pretty way
+    fig, ax = layout_graphs_of_arb_number(num_of_plots)
+    # resizes the array for hyperspectral data
+
+    if data.ndim == 3:
+        original_size = data.shape[0].astype(int)
+        data = data.reshape(-1, data.shape[2])
+        verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(
+            data.shape[0], data.shape[1]))
+    elif data.ndim == 2:
+        original_size = np.sqrt(data.shape[0]).astype(int)
+    else:
+        raise ValueError("data is of an incorrect size")
+
+    for i in range(num_of_plots):
+        im = ax[i].imshow(data[:, i].reshape(original_size, original_size))
+        ax[i].set_yticklabels('')
+        ax[i].set_xticklabels('')
+        #
+
+        if add_colorbars:
+            add_colorbar(ax[i], im)
+
+        # labels figures
+        if letter_labels:
+            labelfigs(ax[i], i)
+        labelfigs(ax[i], i, string_add='emb. {0}'.format(i + 1), loc='bm')
+
+        if add_scalebar is not False:
+            add_scalebar_to_figure(ax[i], add_scalebar[0], add_scalebar[1])
+
+    plt.tight_layout(pad=0, h_pad=0)
+
+    savefig(filename, dpi=300, print_EPS=print_EPS, print_PNG=print_PNG)
+
+
 def plot_pca_values(voltage, pca, num_of_plots=True, set_ylim=True, letter_labels=False,
                     filename='./PCA_vectors', print_EPS=False,
                     print_PNG=False, dpi=300):
@@ -723,9 +791,9 @@ def T_SNE(encodings, n_components=2, perplexity=30.0, early_exaggeration=12.0,
     if save_results:
         folder_path = make_folder('TSNE')
         file_name_ = file_name + '_comp_{0}_per_{1}_lr_{2}_iter_{3}'.format(n_components,
-                                                                             perplexity,
-                                                                             learning_rate,
-                                                                             n_iter)
+                                                                            perplexity,
+                                                                            learning_rate,
+                                                                            n_iter)
         file_name_ = prevent_file_overwrite(pjoin(folder_path, file_name_), 'npy')
         np.save(pjoin(file_name_), TSNE_Results)
 
@@ -749,6 +817,7 @@ def make_folder(folder_name, root='./'):
 
     return (folder)
 
+
 def prevent_file_overwrite(file_name, ext):
     """
     makes sure file being saved does not overwrite existing
@@ -761,53 +830,52 @@ def prevent_file_overwrite(file_name, ext):
         the file extension
     """
 
-    count=0
-    file_name  = file_name + '.' + ext
+    count = 0
+    file_name = file_name + '.' + ext
     while os.path.isfile(file_name):
         if file_name.find('_run') == -1:
             file_name = file_name[:-4]
             file_name = file_name + '_run_{0:02d}.'.format(count) + ext
         else:
-            count =+ 1
-            file_name = file_name[:file_name.find('run')+4] +'{0:02d}.npy'.format(count) + ext
+            count = + 1
+            file_name = file_name[:file_name.find('run') + 4] + '{0:02d}.npy'.format(count) + ext
 
-    return(file_name[:-len(ext)-1])
+    return(file_name[:-len(ext) - 1])
 
-def rgb_color_map(data, add_scalebar = False, print_EPS=False,
-                                print_PNG=False, filename='RGB_maps', dpi=300):
 
-        """
-        Plots 3d hyperspectral data as an RGB image for visualization
-        TODO: need to improve colormaps used
+def rgb_color_map(data, add_scalebar=False, print_EPS=False,
+                  print_PNG=False, filename='RGB_maps', dpi=300):
+    """
+    Plots 3d hyperspectral data as an RGB image for visualization
+    TODO: need to improve colormaps used
 
-        Parameters
-        ----------
-        data : numpy array
-            voltage vector for the hysteresis loop
-        add_scalebar : int, optional
-            vector with 2 values first is the scan size second is the marker size
-        filename : str, optional
-            sets the path and filename for the exported images
-        print_EPS : bool, optional
-            to export as EPS
-        print_PNG : bool, optional
-            to export as PNG
-        dpi : int, optional
-            resolution of exported image
-        """
-
-    fig = plt.figure(figsize=(3,3), dpi=300))
-    ax = fig.add_subplot(111) # 1 Row, 1 Column and the first axes in this grid
+    Parameters
+    ----------
+    data : numpy array
+        voltage vector for the hysteresis loop
+    add_scalebar : int, optional
+        vector with 2 values first is the scan size second is the marker size
+    filename : str, optional
+        sets the path and filename for the exported images
+    print_EPS : bool, optional
+        to export as EPS
+    print_PNG : bool, optional
+        to export as PNG
+    dpi : int, optional
+        resolution of exported image
+    """
+    fig = plt.figure(figsize=(3, 3), dpi=300)
+    ax = fig.add_subplot(111)  # 1 Row, 1 Column and the first axes in this grid
 
     # Pre-allocates the matrix
-    RGB = np.ones((data.shape[0],3))
+    RGB = np.ones((data.shape[0], 3))
 
     for i in range(3):
-        data[:,i] -= np.nanmin(data[:,i])
-        RGB[:,i] = (data[:,i]/(np.nanmax(data[:,i])))
+        data[:, i] -= np.nanmin(data[:, i])
+        RGB[:, i] = (data[:, i] / (np.nanmax(data[:, i])))
 
     size = np.sqrt(data.shape[0]).astype('int')
-    im = ax.imshow(RGB.reshape(size,size,3))
+    im = ax.imshow(RGB.reshape(size, size, 3))
     ax.set_yticklabels('')
     ax.set_xticklabels('')
 

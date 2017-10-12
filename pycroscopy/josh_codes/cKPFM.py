@@ -1,2 +1,2 @@
 def josh_test(strings):
-  print(string) 
+  print(strings) 

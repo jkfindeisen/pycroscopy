@@ -1,5 +1,23 @@
 def fit_cKPFM_linear(bias_vec_r,resp_mat_vsr):
 
+    """
+    Parameters
+    ----------
+    bias_vec_r : numpy array
+        bias vector for the read voltage
+    resp_mat_vsr : numpy array
+        array containing the DC response curves
+
+    Returns
+    -------
+    fit_slope : numpy array
+        slope fit results
+    fit_yintercept : numpy array
+        y_intercept results
+    jCPD_mat : numpy array
+        junction contact potential
+        
+    """
     fit_slope = np.zeros(resp_mat_vsr.shape)
     fit_yintercept = np.zeros(resp_mat_vsr.shape)
     jCPD_mat = np.zeros(resp_mat_vsr.shape)

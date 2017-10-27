@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from sklearn import (decomposition)
 import numpy as np
 from scipy import (interpolate)
@@ -15,6 +16,14 @@ PathPatch = patches.PathPatch
 
 
 def conduct_PCA(loops, n_components=15, verbose=True):
+=======
+def josh_test(name):
+    print(f'you typed in {name}, the test workeddd')
+
+
+def conduct_PCA(loops, n_components=15):
+
+>>>>>>> Add conduct_PCA
     """
     Computes the PCA and forms a low-rank representation of a series of response curves
     This code can be applied to all forms of response curves.
@@ -23,11 +32,17 @@ def conduct_PCA(loops, n_components=15, verbose=True):
     Parameters
     ----------
     loops : numpy array
+<<<<<<< HEAD
         1 or 2d numpy array - [number of samples, response spectra for each sample]
     n_components : int, optional
         int - sets the number of componets to save
     verbose : bool, optional
         output operational comments
+=======
+        2d numpy array - [number of samples, response spectra for each sample]
+    n_components : int, optional
+        int - sets the number of componets to save
+>>>>>>> Add conduct_PCA
 
     Returns
     -------
@@ -37,6 +52,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
         low-rank representation of the raw data reconstructed based on PCA denoising
     """
 
+<<<<<<< HEAD
     # resizes the array for hyperspectral data
     if loops.ndim == 3:
         original_size = loops.shape[0]
@@ -52,6 +68,8 @@ def conduct_PCA(loops, n_components=15, verbose=True):
         raise ValueError(
             'data has infinite values consider using a imputer \n see interpolate_missing_points function')
 
+=======
+>>>>>>> Add conduct_PCA
     # Sets the number of components to save
     pca = decomposition.PCA(n_components=n_components)
 
@@ -60,6 +78,7 @@ def conduct_PCA(loops, n_components=15, verbose=True):
 
     # does the inverse transform - creates a low rank representation of the data
     # this process denoises the data
+<<<<<<< HEAD
     PCA_reconstructed = pca.inverse_transform(pca.transform(loops))
 
     # resized the array for hyperspectral data
@@ -883,3 +902,8 @@ def rgb_color_map(data, add_scalebar=False, print_EPS=False,
         add_scalebar_to_figure(ax, add_scalebar[0], add_scalebar[1])
 
     savefig(filename, dpi=dpi, print_EPS=print_EPS, print_PNG=print_PNG)
+=======
+    PCA_reconstructed= pca.inverse_transform(pca.transform(loops))
+
+    return(PCA, PCA_reconstructed)
+>>>>>>> Add conduct_PCA

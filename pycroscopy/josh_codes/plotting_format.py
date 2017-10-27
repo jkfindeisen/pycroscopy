@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from sklearn import (decomposition)
 import numpy as np
 from scipy import (interpolate)
@@ -884,11 +883,3 @@ def rgb_color_map(data, add_scalebar=False, print_EPS=False,
         add_scalebar_to_figure(ax, add_scalebar[0], add_scalebar[1])
 
     savefig(filename, dpi=dpi, print_EPS=print_EPS, print_PNG=print_PNG)
-=======
-def josh_test(name):
-<<<<<<< HEAD
-    print(f'you typed in {name}, the test worked')
->>>>>>> first commit to branch
-=======
-    print(f'you typed in {name}, the test workedd')
->>>>>>> test

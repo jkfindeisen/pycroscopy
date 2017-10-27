@@ -886,5 +886,9 @@ def rgb_color_map(data, add_scalebar=False, print_EPS=False,
     savefig(filename, dpi=dpi, print_EPS=print_EPS, print_PNG=print_PNG)
 =======
 def josh_test(name):
+<<<<<<< HEAD
     print(f'you typed in {name}, the test worked')
 >>>>>>> first commit to branch
+=======
+    print(f'you typed in {name}, the test workedd')
+>>>>>>> test

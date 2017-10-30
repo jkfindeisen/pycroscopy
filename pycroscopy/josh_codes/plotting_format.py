@@ -203,14 +203,14 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels=F
     # resizes the array for hyperspectral data
 
     if loops.ndim == 3:
-        original_size = loops.shape[0].astype(int)
+        original_size = loops.shape[0]
         loops = loops.reshape(-1, loops.shape[2])
         verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(
             loops.shape[0], loops.shape[1]))
     elif loops.ndim == 2:
         original_size = np.sqrt(loops.shape[0])
     else:
-        raise ValueError("data is of an incorrect size")
+        raise ValueError("data is of an incorrect size").astype(int)
 
     PCA_maps = pca_weights_as_embeddings(pca, loops, num_of_components=num_of_plots)
 

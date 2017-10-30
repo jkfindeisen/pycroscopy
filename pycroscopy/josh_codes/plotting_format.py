@@ -203,7 +203,7 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels=F
     # resizes the array for hyperspectral data
 
     if loops.ndim == 3:
-        original_size = loops.shape[0]
+        original_size = loops.shape[0].astype(int)
         loops = loops.reshape(-1, loops.shape[2])
         verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(
             loops.shape[0], loops.shape[1]))

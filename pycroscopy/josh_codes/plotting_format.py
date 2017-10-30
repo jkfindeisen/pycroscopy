@@ -195,7 +195,7 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels=F
     num_of_plots : int, optional
             number of principle componets to show
     """
-    if num_of_plots = -1:
+    if num_of_plots == -1:
         num_of_plots = pca.n_components_
 
     # creates the figures and axes in a pretty way
@@ -644,7 +644,7 @@ def T_SNE(encodings, n_components=2, perplexity=30.0, early_exaggeration=12.0,
     n_components : int, optional (default: 2)
         Dimension of the embedded space.
 
-    perplexity : float, optional (default: 30) 
+    perplexity : float, optional (default: 30)
         The perplexity is related to the number of nearest neighbors that
         is used in other manifold learning algorithms. Larger datasets
         usually require a larger perplexity. Consider selecting a value

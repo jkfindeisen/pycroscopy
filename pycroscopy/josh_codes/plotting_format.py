@@ -208,9 +208,9 @@ def plot_pca_maps(pca, loops, add_colorbars=True, verbose=False, letter_labels=F
         verbose_print(verbose, 'shape of data resized to [{0} x {1}]'.format(
             loops.shape[0], loops.shape[1]))
     elif loops.ndim == 2:
-        original_size = np.sqrt(loops.shape[0])
+        original_size = np.sqrt(loops.shape[0]).astype(int)
     else:
-        raise ValueError("data is of an incorrect size").astype(int)
+        raise ValueError("data is of an incorrect size")
 
     PCA_maps = pca_weights_as_embeddings(pca, loops, num_of_components=num_of_plots)
 
